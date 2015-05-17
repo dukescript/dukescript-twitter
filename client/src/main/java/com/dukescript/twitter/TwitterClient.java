@@ -48,8 +48,7 @@ import net.java.html.json.Property;
 }, targetId = "")
 final class TwitterClient {
 
-    private static String  BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-//    private static String  BEARER_TOKEN = "Insert a bearer token ( https://dev.twitter.com/oauth/application-only )";
+    private static String  BEARER_TOKEN = "Insert a bearer token ( https://dev.twitter.com/oauth/application-only )";
     
     @Model(className = "Tweeters", properties = {
         @Property(name = "name", type = String.class),
