@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The MIT License (MIT)
+
+    Copyright (C) 2015 Anton Epple <anton.epple@eppleton.de>
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+-->
+
+<!--
+    Copied from knockout.js Twitter example:
+    http://knockoutjs.com/examples/twitter.html
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Html and Java Twitter</title>
+        <link href='twitterExample.css' rel='Stylesheet' ></link>
+        <style type='text/css'>
+           .liveExample select { height: 1.7em; }
+           .liveExample button { height: 2em; }
+        </style>
+    </head>
+    <body>        
+        <div class='liveExample'>
+            <div class='configuration'>
+                <div class='listChooser'>
+                    <button data-bind='click: deleteList, enable: activeTweetersName'>Delete</button>
+                    <button data-bind='click: saveChanges, enable: hasUnsavedChanges'>Save</button> 
+                    <select data-bind='options: savedLists, optionsValue: "name", value: activeTweetersName'> </select>
+                </div>
+
+                <p>Currently viewing <span data-bind='text: activeTweetersCount'> </span> user(s):</p>
+                <div class='currentUsers' >
+                    <ul data-bind='foreach: activeTweeters'>
+                        <li>
+                            <button data-bind='click: $root.removeUser'>Remove</button>
+                            <div data-bind='text: $data'> </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <form data-bind='submit: addUser'>
+                    <label>Add user:</label>
+                    <input data-bind='value: userNameToAdd, valueUpdate: "keyup", css: { invalid: !userNameToAddIsValid() }' />
+                    <button data-bind='enable: userNameToAddIsValid' type='submit'>Add</button>
+                </form>
+            </div>
+            <div class='tweets'>
+                <div class='loadingIndicator' data-bind="visible: loading">Loading...</div>
+                <table data-bind='foreach: currentTweets' width='100%'>
+                    <tr>
+                        <td><img data-bind='attr: { src: profile_image_url }' /></td>
+                        <td>
+                            <a class='twitterUser' data-bind='attr: { href: userUrl }, text: from_user'> </a>
+                            <span data-bind='html: html'> </span>
+                            <div class='tweetInfo' data-bind='text: created_at'> </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
