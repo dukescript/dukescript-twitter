@@ -50,6 +50,7 @@ public class Main {
 
     public static void onPageLoad(String... args) {
         try {
+          
             TwitterClient.init();
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
