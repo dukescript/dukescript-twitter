@@ -36,8 +36,8 @@
         <title>Html and Java Twitter</title>
         <link href='twitterExample.css' rel='Stylesheet' ></link>
         <style type='text/css'>
-           .liveExample select { height: 1.7em; }
-           .liveExample button { height: 2em; }
+            .liveExample select { height: 1.7em; }
+            .liveExample button { height: 2em; }
         </style>
     </head>
     <body>        
@@ -69,11 +69,16 @@
                 <div class='loadingIndicator' data-bind="visible: loading">Loading...</div>
                 <table data-bind='foreach: currentTweets' width='100%'>
                     <tr>
+                        <!-- ko with: user -->
                         <td><img data-bind='attr: { src: profile_image_url }' /></td>
+                        <!-- /ko -->
                         <td>
-                            <a class='twitterUser' data-bind='attr: { href: userUrl }, text: from_user'> </a>
+                        <!-- ko with: user -->
+                        <a class='twitterUser' data-bind='attr: { href: userUrl }, text: name'> </a>
+                        <!-- /ko -->
                             <span data-bind='html: html'> </span>
-                            <div class='tweetInfo' data-bind='text: created_at'> </div>
+                            <div class='tweetInfo' data-bind='text: created_at'> </div>                            
+
                         </td>
                     </tr>
                 </table>

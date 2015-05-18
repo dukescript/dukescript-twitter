@@ -48,8 +48,8 @@ import net.java.html.json.Property;
 }, targetId = "")
 final class TwitterClient {
 
-    private static String  BEARER_TOKEN = "Insert a bearer token ( https://dev.twitter.com/oauth/application-only )";
-    
+    private static String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
+
     @Model(className = "Tweeters", properties = {
         @Property(name = "name", type = String.class),
         @Property(name = "userNames", type = String.class, array = true)
@@ -57,12 +57,23 @@ final class TwitterClient {
     static class Twttrs {
     }
 
+    @Model(className = "User", properties = {
+        @Property(name = "name", type = String.class),
+        @Property(name = "id_str", type = int.class),
+        @Property(name = "profile_image_url", type = String.class),})
+    static final class Sr {
+
+        @ComputedProperty
+        static String userUrl(String name) {
+            return "http://twitter.com/" + name;
+        }
+    }
+
     @Model(className = "Tweet", properties = {
-        @Property(name = "from_user", type = String.class),
-        @Property(name = "from_user_id", type = int.class),
-        @Property(name = "profile_image_url", type = String.class),
         @Property(name = "text", type = String.class),
-        @Property(name = "created_at", type = String.class),})
+        @Property(name = "created_at", type = String.class),
+        @Property(name = "user", type = User.class)
+    })
     static final class Twt {
 
         @ComputedProperty
@@ -85,10 +96,6 @@ final class TwitterClient {
             }
         }
 
-        @ComputedProperty
-        static String userUrl(String from_user) {
-            return "http://twitter.com/" + from_user;
-        }
     }
 
     @Model(className = "TwitterQuery", properties = {
@@ -113,7 +120,9 @@ final class TwitterClient {
 
     @OnPropertyChange({"activeTweeters", "activeTweetersCount"})
     static void refreshTweets(TwitterModel model) {
-        if (model.getActiveTweeters().isEmpty()) return;
+        if (model.getActiveTweeters().isEmpty()) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("q=");
         String sep = "";
@@ -124,7 +133,7 @@ final class TwitterClient {
         }
         sb.append("|Authorization: Bearer ");
         sb.append(BEARER_TOKEN);
-        
+
         model.setLoading(true);
         model.queryTweets("https://api.twitter.com/1.1/search", sb.toString());
     }
