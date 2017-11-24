@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dukescript.twitter;
+package com.dukescript.twitterdemo.token;
 
 import java.io.BufferedReader;
 import java.io.IOException;
