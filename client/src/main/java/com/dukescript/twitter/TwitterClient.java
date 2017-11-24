@@ -24,9 +24,6 @@
 package com.dukescript.twitter;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.List;
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
@@ -41,7 +38,7 @@ import net.java.html.json.Property;
  *
  * @author Anton Epple <anton.epple@eppleton.de>
  */
-@Model(className = "TwitterModel", properties = {
+@Model(className = "TwitterModel", builder = "put", properties = {
     @Property(name = "savedLists", type = Tweeters.class, array = true),
     @Property(name = "activeTweetersName", type = String.class),
     @Property(name = "activeTweeters", type = String.class, array = true),
@@ -144,16 +141,13 @@ final class TwitterClient {
 
     static void init() throws IOException {
         final String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-        final TwitterModel model = new TwitterModel();
-        final List<Tweeters> svdLst = model.getSavedLists();
-        svdLst.add(newTweeters("API Design", "JaroslavTulach"));
-        svdLst.add(newTweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"));
-        svdLst.add(newTweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"));
-        svdLst.add(newTweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"));
-        svdLst.add(newTweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror"));
-
-        model.setActiveTweetersName("NetBeans");
-        model.setToken(BEARER_TOKEN);
+        final TwitterModel model = new TwitterModel().putSavedLists(
+            new Tweeters("API Design", "JaroslavTulach"),
+            new Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
+            new Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
+            new Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
+            new Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
+        ).putActiveTweetersName("NetBeans").putToken(BEARER_TOKEN);
         model.applyBindings();
     }
 
@@ -221,12 +215,5 @@ final class TwitterClient {
             }
         }
         return list.isEmpty() ? new Tweeters() : list.get(0);
-    }
-
-    private static Tweeters newTweeters(String listName, String... userNames) {
-        Tweeters t = new Tweeters();
-        t.setName(listName);
-        t.getUserNames().addAll(Arrays.asList(userNames));
-        return t;
     }
 }
