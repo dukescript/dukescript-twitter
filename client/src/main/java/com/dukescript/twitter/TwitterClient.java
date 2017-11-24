@@ -181,9 +181,7 @@ final class TwitterClient {
         final List<Tweeters> sl = model.getSavedLists();
         sl.remove(findByName(sl, model.getActiveTweetersName()));
         if (sl.isEmpty()) {
-            final Tweeters t = new Tweeters();
-            t.setName("New");
-            sl.add(t);
+            sl.add(new Tweeters("New"));
         }
         model.setActiveTweetersName(sl.get(0).getName());
     }
