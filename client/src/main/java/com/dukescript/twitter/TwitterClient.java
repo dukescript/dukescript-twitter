@@ -24,11 +24,14 @@
 package com.dukescript.twitter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
 import net.java.html.json.Model;
+import net.java.html.json.ModelOperation;
 import net.java.html.json.OnPropertyChange;
 import net.java.html.json.OnReceive;
 import net.java.html.json.Property;
@@ -44,12 +47,10 @@ import net.java.html.json.Property;
     @Property(name = "activeTweeters", type = String.class, array = true),
     @Property(name = "userNameToAdd", type = String.class),
     @Property(name = "currentTweets", type = Tweet.class, array = true),
-    @Property(name = "loading", type = boolean.class)
+    @Property(name = "loading", type = boolean.class),
+    @Property(name = "token", type = String.class),
 }, targetId = "")
 final class TwitterClient {
-
-    private static String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-
     @Model(className = "Tweeters", properties = {
         @Property(name = "name", type = String.class),
         @Property(name = "userNames", type = String.class, array = true)
@@ -104,7 +105,9 @@ final class TwitterClient {
     public static final class TwttrQr {
     }
 
-    @OnReceive(url = "{root}/tweets.json?{query}")
+    @OnReceive(headers = {
+        "Authorization: Bearer {token}"
+    }, url = "{root}/tweets.json?{query}")
     static void queryTweets(TwitterModel page, TwitterQuery q) {
         page.getCurrentTweets().clear();
         page.getCurrentTweets().addAll(q.getStatuses());
@@ -123,6 +126,9 @@ final class TwitterClient {
         if (model.getActiveTweeters().isEmpty()) {
             return;
         }
+        if (model.getToken() == null) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("q=");
         String sep = "";
@@ -131,14 +137,13 @@ final class TwitterClient {
             sb.append(p);
             sep = "%20OR%20";
         }
-        sb.append("|Authorization: Bearer ");
-        sb.append(BEARER_TOKEN);
 
         model.setLoading(true);
-        model.queryTweets("https://api.twitter.com/1.1/search", sb.toString());
+        model.queryTweets("https://api.twitter.com/1.1/search", sb.toString(), model.getToken());
     }
 
     static void init() throws IOException {
+        final String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
         final TwitterModel model = new TwitterModel();
         final List<Tweeters> svdLst = model.getSavedLists();
         svdLst.add(newTweeters("API Design", "JaroslavTulach"));
@@ -148,7 +153,7 @@ final class TwitterClient {
         svdLst.add(newTweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror"));
 
         model.setActiveTweetersName("NetBeans");
-//        String bearerToken = getBearerToken();
+        model.setToken(BEARER_TOKEN);
         model.applyBindings();
     }
 
