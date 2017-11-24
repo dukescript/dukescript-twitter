@@ -118,6 +118,7 @@ final class TwitterClient {
         model.getActiveTweeters().addAll(people.getUserNames());
     }
 
+    @ModelOperation
     @OnPropertyChange({"activeTweeters", "activeTweetersCount"})
     static void refreshTweets(TwitterModel model) {
         if (model.getActiveTweeters().isEmpty()) {
@@ -149,6 +150,7 @@ final class TwitterClient {
             new Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
         ).putActiveTweetersName("NetBeans").putToken(BEARER_TOKEN);
         model.applyBindings();
+        model.refreshTweets();
     }
 
     @ComputedProperty
