@@ -9,6 +9,7 @@ import net.java.html.kotlin.actionWithData
 import net.java.html.kotlin.computed
 import net.java.html.kotlin.observable
 import net.java.html.kotlin.observableList
+import net.java.html.kotlin.loadJSON
 import net.java.html.boot.BrowserBuilder
 import net.java.html.json.Models
 
@@ -22,30 +23,35 @@ fun main(args: Array<String>) {
 }
 
 fun onPageLoad(vararg args: String) {
-        val BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-        val model = TwitterDemo()
-        model.savedLists.plus(arrayOf(
+    val BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
+    val model = TwitterDemo(BEARER_TOKEN,
+            "NetBeans",
             Tweeters("API Design", "JaroslavTulach"),
             Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
             Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
             Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
             Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
-        ))
-        model.activeTweetersName = "NetBeans";
-        model.token = BEARER_TOKEN;
-        Models.applyBindings(model);
-        //model.refreshTweets();
+    )
+    model.activeTweetersName = "NetBeans"
+    TwitterQuery().statuses
+    Tweet().text
+    User().userUrl
+    Models.applyBindings(model);
+    model.refreshTweets
+    //       model.refreshTweets();
 }
 
-class TwitterDemo : Objs.Provider {
+private class TwitterDemo(
+        token: String, selectedListName: String, vararg lists: Tweeters
+) : Objs.Provider {
     override val objs = Objs(this)
-    val savedLists: MutableList<Tweeters> by observableList()
-    var activeTweetersName by observable("")
+    val savedLists: MutableList<Tweeters> by observableList(*lists)
+    var activeTweetersName by observable(selectedListName)
     val activeTweeters: MutableList<String> by observableList()
     var userNameToAdd by observable("")
     val currentTweets: MutableList<Tweet> by observableList()
     var loading by observable(false)
-    var token by observable("")
+    var token by observable(token)
 
     val hasUnsavedChanges by computed {
         val tw = findByName(savedLists, activeTweetersName);
@@ -68,7 +74,7 @@ class TwitterDemo : Objs.Provider {
         activeTweetersName = savedLists[0].name;
     }
 
-    val saveChanges by computed {
+    val saveChanges by action {
         val t = findByName(savedLists, activeTweetersName);
         val indx = savedLists.indexOf(t);
         if (indx != -1) {
@@ -82,13 +88,13 @@ class TwitterDemo : Objs.Provider {
         activeTweeters += userNameToAdd;
     }
 
-    val removeUser by actionWithData { data : String? ->
+    val removeUser by actionWithData { data: String? ->
         if (data != null) {
             activeTweeters -= data
         }
     }
 
-    fun findByName(list : List<Tweeters>, name : String?): Tweeters {
+    fun findByName(list: List<Tweeters>, name: String?): Tweeters {
         for (l in list) {
             if (l.name == name) {
                 return l;
@@ -97,6 +103,30 @@ class TwitterDemo : Objs.Provider {
         return if (list.isEmpty()) Tweeters("New") else list.get(0);
     }
 
+    val refreshTweets: Unit by computed {
+        if (!activeTweeters.isEmpty()) {
+            var sb = "https://api.twitter.com/1.1/search"
+            sb += "/tweets.json?"
+            sb += "q="
+            var sep = ""
+            for (p in activeTweeters) {
+                sb += sep
+                sb += p
+                sep = "%20OR%20"
+            }
+            loading = true
+
+            loadJSON(sb, { data: List<TwitterQuery> -> Unit
+                if (!data.isEmpty()) {
+                    this.currentTweets.clear()
+                    this.currentTweets.addAll(data[0].statuses)
+                }
+                loading = false
+            }, headers = mapOf(
+                Pair("Authorization", "Bearer ${token}")
+            ))
+        }
+    }
 }
 
 class Tweeters : Objs.Provider {
@@ -105,7 +135,7 @@ class Tweeters : Objs.Provider {
     var name by observable("")
     val userNames: MutableList<String> by observableList()
 
-    constructor (name : String, vararg userNames: String) {
+    constructor (name: String, vararg userNames: String) {
         this.name = name
         this.userNames += userNames
     }
@@ -143,7 +173,7 @@ final class Tweet : Objs.Provider {
                 spc = text.length;
             }
             sb.append(text.substring(pos, http));
-            val url = text.substring (http, spc);
+            val url = text.substring(http, spc);
             sb.append("<a href='").append(url).append("'>").append(url).append("</a>");
             pos = spc;
         }
@@ -151,13 +181,13 @@ final class Tweet : Objs.Provider {
     }
 }
 
-/*
-    @Model(className = "TwitterQuery", properties = {
-        @Property(array = true, name = "statuses", type = Twt.class)
-    })
-    public static final class TwttrQr {
-    }
+class TwitterQuery : Objs.Provider {
+    override val objs = Objs(this)
+    
+    val statuses: MutableList<Tweet> by observableList()
+}
 
+/*
     @OnReceive(headers = {
         "Authorization: Bearer {token}"
     }, url = "{root}/tweets.json?{query}")
