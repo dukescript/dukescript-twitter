@@ -25,20 +25,25 @@ fun main(args: Array<String>) {
 fun onPageLoad(vararg args: String) {
     val BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
     val model = TwitterDemo(BEARER_TOKEN,
-            "NetBeans",
-            Tweeters("API Design", "JaroslavTulach"),
+            "NetBeans"
+    )
+    // TBD: this should go into constructor
+    model.activeTweetersName = "NetBeans"
+    model.savedLists += arrayOf(Tweeters("API Design", "JaroslavTulach"),
             Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
             Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
             Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
             Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
     )
-    model.activeTweetersName = "NetBeans"
+    // TBD: this initialization shall not be needed at all
     TwitterQuery().statuses
     Tweet().text
     User().userUrl
+    // this is OK
     Models.applyBindings(model);
+    // TBD: this may not be needed either
+    model.updateActiveTweeters
     model.refreshTweets
-    //       model.refreshTweets();
 }
 
 private class TwitterDemo(
@@ -127,6 +132,13 @@ private class TwitterDemo(
             ))
         }
     }
+
+    val updateActiveTweeters: Unit by computed {
+        val people = findByName(savedLists, activeTweetersName)
+        activeTweeters.clear()
+        activeTweeters.addAll(people.userNames)
+        Unit
+    }
 }
 
 class Tweeters : Objs.Provider {
@@ -187,42 +199,3 @@ class TwitterQuery : Objs.Provider {
     val statuses: MutableList<Tweet> by observableList()
 }
 
-/*
-    @OnReceive(headers = {
-        "Authorization: Bearer {token}"
-    }, url = "{root}/tweets.json?{query}")
-    static void queryTweets(TwitterModel page, TwitterQuery q) {
-        page.getCurrentTweets().clear();
-        page.getCurrentTweets().addAll(q.getStatuses());
-        page.setLoading(false);
-    }
-
-    @OnPropertyChange("activeTweetersName")
-    static void changeTweetersList(TwitterModel model) {
-        Tweeters people = findByName(model.getSavedLists(), model.getActiveTweetersName());
-        model.getActiveTweeters().clear();
-        model.getActiveTweeters().addAll(people.getUserNames());
-    }
-
-    @ModelOperation
-    @OnPropertyChange({"activeTweeters", "activeTweetersCount"})
-    static void refreshTweets(TwitterModel model) {
-        if (model.getActiveTweeters().isEmpty()) {
-            return;
-        }
-        if (model.getToken() == null) {
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("q=");
-        String sep = "";
-        for (String p : model.getActiveTweeters()) {
-            sb.append(sep);
-            sb.append(p);
-            sep = "%20OR%20";
-        }
-
-        model.setLoading(true);
-        model.queryTweets("https://api.twitter.com/1.1/search", sb.toString(), model.getToken());
-    }
-*/
