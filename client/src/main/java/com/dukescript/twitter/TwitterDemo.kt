@@ -10,8 +10,8 @@ import net.java.html.kotlin.computed
 import net.java.html.kotlin.observable
 import net.java.html.kotlin.observableList
 import net.java.html.kotlin.loadJSON
+import net.java.html.kotlin.applyBindings
 import net.java.html.boot.BrowserBuilder
-import net.java.html.json.Models
 
 fun main(args: Array<String>) {
     BrowserBuilder.newBrowser().loadPage("pages/index.html")
@@ -24,21 +24,14 @@ fun main(args: Array<String>) {
 
 fun onPageLoad(vararg args: String) {
     val BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-    val model = TwitterDemo(BEARER_TOKEN, "")
-    // TBD: this should go into constructor
-    model.savedLists += arrayOf(Tweeters("API Design", "JaroslavTulach"),
+    val model = TwitterDemo(BEARER_TOKEN, "NetBeans", Tweeters("API Design", "JaroslavTulach"),
             Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
             Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
             Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
             Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
     )
-    // TBD: this initialization shall not be needed at all
-    TwitterQuery().statuses
-    Tweet().text
-    User().userUrl
-    // this is OK
-    Models.applyBindings(model);
-    model.activeTweetersName = "NetBeans"
+    model.updateActiveTweeters()
+    applyBindings(model);
 }
 
 private class TwitterDemo(
