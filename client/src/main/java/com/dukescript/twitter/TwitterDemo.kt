@@ -24,11 +24,8 @@ fun main(args: Array<String>) {
 
 fun onPageLoad(vararg args: String) {
     val BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-    val model = TwitterDemo(BEARER_TOKEN,
-            "NetBeans"
-    )
+    val model = TwitterDemo(BEARER_TOKEN, "")
     // TBD: this should go into constructor
-    model.activeTweetersName = "NetBeans"
     model.savedLists += arrayOf(Tweeters("API Design", "JaroslavTulach"),
             Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
             Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
@@ -41,18 +38,22 @@ fun onPageLoad(vararg args: String) {
     User().userUrl
     // this is OK
     Models.applyBindings(model);
-    // TBD: this may not be needed either
-    model.updateActiveTweeters
-    model.refreshTweets
+    model.activeTweetersName = "NetBeans"
 }
 
 private class TwitterDemo(
         token: String, selectedListName: String, vararg lists: Tweeters
 ) : Objs.Provider {
     override val objs = Objs(this)
-    val savedLists: MutableList<Tweeters> by observableList(*lists)
-    var activeTweetersName by observable(selectedListName)
-    val activeTweeters: MutableList<String> by observableList()
+    val savedLists: MutableList<Tweeters> by observableList(*lists) {
+        updateActiveTweeters()
+    }
+    var activeTweetersName by observable(selectedListName) {
+        updateActiveTweeters()
+    }
+    val activeTweeters: MutableList<String> by observableList() {
+        refreshTweets()
+    }
     var userNameToAdd by observable("")
     val currentTweets: MutableList<Tweet> by observableList()
     var loading by observable(false)
@@ -108,7 +109,7 @@ private class TwitterDemo(
         return if (list.isEmpty()) Tweeters("New") else list.get(0);
     }
 
-    val refreshTweets: Unit by computed {
+    fun refreshTweets() {
         if (!activeTweeters.isEmpty()) {
             var sb = "https://api.twitter.com/1.1/search"
             sb += "/tweets.json?"
@@ -133,11 +134,10 @@ private class TwitterDemo(
         }
     }
 
-    val updateActiveTweeters: Unit by computed {
+    fun updateActiveTweeters() {
         val people = findByName(savedLists, activeTweetersName)
         activeTweeters.clear()
         activeTweeters.addAll(people.userNames)
-        Unit
     }
 }
 
