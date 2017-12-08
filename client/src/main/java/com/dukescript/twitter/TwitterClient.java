@@ -162,6 +162,7 @@ final class TwitterClient {
     }
 
     static void onPageLoad(PlatformServices services) throws IOException {
+//          services.setPreferences(BEARER_TOKEN, "");
           final String bearerToken = services.getPreferences(BEARER_TOKEN);
 
          final TwitterModel model = new TwitterModel().putSavedLists(

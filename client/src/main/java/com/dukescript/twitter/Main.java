@@ -50,7 +50,7 @@ public class Main {
         
     }
     
-      public static void onPageLoad(PlatformServices services) throws Exception {
+    public static void onPageLoad(PlatformServices services) throws Exception {
           try {  
             TwitterClient.onPageLoad(services);
         } catch (IOException ex) {
