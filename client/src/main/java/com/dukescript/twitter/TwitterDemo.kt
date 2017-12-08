@@ -3,15 +3,15 @@
 package com.dukescript.twitter
 
 import com.sun.corba.se.spi.orbutil.fsm.Action
-import net.java.html.kotlin.Objs
-import net.java.html.kotlin.action
-import net.java.html.kotlin.actionWithData
-import net.java.html.kotlin.computed
-import net.java.html.kotlin.observable
-import net.java.html.kotlin.observableList
-import net.java.html.kotlin.loadJSON
-import net.java.html.kotlin.applyBindings
+import com.dukescript.api.kt.Objs
+import com.dukescript.api.kt.action
+import com.dukescript.api.kt.actionWithData
+import com.dukescript.api.kt.computed
+import com.dukescript.api.kt.observable
+import com.dukescript.api.kt.observableList
+import com.dukescript.api.kt.loadJSON
 import net.java.html.boot.BrowserBuilder
+import net.java.html.json.Models
 
 fun main(args: Array<String>) {
     BrowserBuilder.newBrowser().loadPage("pages/index.html")
@@ -31,7 +31,7 @@ fun onPageLoad(vararg args: String) {
             Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
     )
     model.updateActiveTweeters()
-    applyBindings(model);
+    Models.applyBindings(model);
 }
 
 private class TwitterDemo(
