@@ -29,30 +29,192 @@
     http://knockoutjs.com/examples/twitter.html
 */
 
-.configuration, .tweets, .tweets td { font-family: Verdana; font-size: 13px; }
-.configuration { background-color: #DEDEDE; border: 2px solid gray; float:left; height: 40em; width: 40%; padding: 0.5em; border-right-width:0; }
-.tweets { width: 55%; border: 2px solid gray; height: 40em; overflow: scroll; overflow-x: hidden; background-color: Black; color: White; padding: 0.5em; position: relative; }
-.tweets table { border-width: 0;}
-.tweets tr { vertical-align: top; }
-.tweets td { padding: 0.4em 0.3em 1em 0.4em; border-width: 0; }
-.tweets img { width: 4em; }
-.tweetInfo { color: Gray; font-size: 0.9em; }
-.twitterUser { color: #77AAFF; text-decoration: none; font-size: 1.1em; font-weight: bold; }
-input.invalid { border: 1px solid red !important; background-color: #FFAAAA !important; }
 
-.listChooser select, .listChooser button { vertical-align:top; }
-.listChooser select { width: 60%; font-size:1.2em; height:1.4em; }
-.listChooser button { width: 19%; height:1.68em; float:right; }
+body {
+    font: normal 18px/1.5 "Helvetica Neue", sans-serif;
+    letter-spacing: 0.05em;
+    background: #EFF1F3;
+    color: #223843;
+    margin:0;
+    /*padding: 50px 0;*/
+}
 
-.currentUsers { height: 28em; overflow-y: auto; overflow-x: hidden; }
-.currentUsers button { float: right; height: 2.5em; margin: 0.1em; padding-left: 1em; padding-right: 1em; }
-.currentUsers ul, .configuration li { list-style: none; margin: 0; padding: 0 }
-.currentUsers li { height: 2.4em; font-size: 1.2em; background-color: #A7D0E3; border: 1px solid gray; margin-bottom: 0.3em; -webkit-border-radius: 5px; -moz-border-radius: 5px; -webkit-box-shadow: 0 0.2em 0.5em gray; -moz-box-shadow: 0 0.2em 0.5em gray; }
-.currentUsers li div { padding: 0.6em; }
-.currentUsers li:hover { background-color: #EEC; }
+a{
+    color: #14213D;
+}
 
-.configuration form label { width: 25%; display: inline-block; text-align:right; overflow: hidden; }
-.configuration form input { width:40%; font-size: 1.3em; border:1px solid silver; background-color: White; padding: 0.1em; }
-.configuration form button { width: 20%; margin-left: 0.3em; height: 2em; }
+.tr{
+    border-bottom: 1px #223843;
+}
 
-.loadingIndicator { position: absolute; top: 0.1em; left: 0.1em; font: 0.8em Arial; background-color: #229; color: White; padding: 0.2em 0.5em 0.2em 0.5em; }
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.container * {
+    box-sizing: border-box;
+}
+
+.flex-outer {
+    list-style-type: none;
+    padding: 0;
+}
+
+.flex-outer {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.flex-outer li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+
+.flex-outer > li:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+.flex-outer li label,
+.flex-outer li p {
+    padding: 8px;
+    font-weight: 300;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+}
+
+.flex-outer > li > label,
+.flex-outer li p {
+    flex: 1 0 120px;
+    max-width: 220px;
+}
+
+.flex-outer > li > label + *{
+    flex: 1 0 220px;
+}
+
+.flex-outer li p {
+    margin: 0;
+}
+
+.flex-outer li input:not([type='checkbox']),
+.flex-outer li textarea {
+    padding: 15px;
+    border: none;
+}
+
+.flex-outer li button {
+    margin-left: auto;
+    padding: 8px 16px;
+    border: none;
+    background: #223843;
+    color: #EFF1F3;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    border-radius: 2px;
+}
+
+.configuration, .tweets, .tweets td { 
+    font-size: 13px; 
+}
+
+.liveExample{
+    height: 100vh;
+    margin-left: 50px;
+    width: 90%;
+/*    display: flex;
+    flex-wrap: nowrap;*/
+}
+
+.tweets{
+    flex-grow: 1;
+}
+
+.configuration {
+    font-weight: 100;
+    background: #223843;
+    width: 300px;
+    height: 100%;
+    padding-right: 50px;
+    position: fixed;
+    z-index: 100;
+    left: -300px;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    color: #EFF1F3;
+}
+
+.configuration.hover {
+    transform: translate3d(+300px, 0, 0);
+    animation-timing-function: 1s ease-in;
+}
+
+.configuration .title {
+    color: #EFF1F3;
+    top: 50%;
+    position: absolute;
+    transform: rotate(270deg);
+    right: 5px;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.configuration .back{
+    background: #EFF1F3;
+    color: #223843;
+    height: 100%;
+    padding: 5px;
+}
+
+.configuration .nav {
+
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-weight: 100;
+}
+.configuration .nav li {
+    padding-bottom: 30px;
+    list-style-type: none;
+}
+.configuration .nav li a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+.configuration .nav li a:hover {
+    color: #aaa;
+}
+
+.tweet-list{
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+}
+
+.tweet-list li{
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+  border-collapse: collapse;
+  width: 100%;
+  display: flex;
+}
+
+.tweet-list li .tweet-right{
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: 5px;
+}
+
+img {
+    flex-shrink: 0;
+}
+
+

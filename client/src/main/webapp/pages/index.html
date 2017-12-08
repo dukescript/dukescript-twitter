@@ -44,62 +44,77 @@
 
 
         <!-- ko ifnot: token -->
-        <h2>Register your app</h2>
-        <p>Cannot authenticate against Twitter Services, because there is no "Bearer Token" stored on this device.
-            If you have registered your app, please enter your credentials below, so we can retrieve the Bearer Token.
-            If you haven't registered your app yet, you can do so <a href='https://apps.twitter.com' target="_blank">here</a>.
+        <div class="container">
+            <h2>Register your app</h2>
+            <p>Cannot authenticate against Twitter Services, because there is no "Bearer Token" stored on this device.
+                If you have registered your app, please enter your credentials below, so we can retrieve the Bearer Token.
+                If you haven't registered your app yet, you can do so <a href='https://apps.twitter.com' target="_blank">here</a>.
 
-        </p>
-        <form data-bind="with: credentials">
-            <label for="key">Key: </label>
-            <input id="key" type="text" data-bind="textInput: key"/>
-            <label for="secret">Secret: </label>
-            <input id="secret" type="text" data-bind="textInput: secret"/>
-            <button type="submit" data-bind="click: $root.getBearerToken">Submit</button>
-        </form>
+            </p>
+            <form data-bind="with: credentials">
+                <ul class="flex-outer">
+                    <li>
+                        <label for="key">Key: </label>
+                        <input id="key" type="text" data-bind="textInput: key" placeholder="Enter your Consumer Key (API Key)"/>
+                    </li>
+                    <li>
+                        <label for="secret">Secret: </label>
+                        <input id="secret" type="text" data-bind="textInput: secret" placeholder="Enter your Consumer Secret (API Secret)"/>
+                    </li>
+                    <li>
+                        <button type="submit" data-bind="click: $root.getBearerToken">Submit</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
         <!-- /ko  -->
         <!-- ko if: token -->
         <div class='liveExample'>
-            <div class='configuration'>
-                <div class='listChooser'>
-                    <button data-bind='click: deleteList, enable: activeTweetersName'>Delete</button>
-                    <button data-bind='click: saveChanges, enable: hasUnsavedChanges'>Save</button> 
-                    <select data-bind='options: savedLists, optionsValue: "name", value: activeTweetersName'> </select>
-                </div>
+            <div class='configuration' data-bind="css: {hover: menuExpanded}">
+                <div class="title" data-bind="click: function(){menuExpanded(!menuExpanded())}">CONFIG</div>
+                <div class="back">
+                    <div class="nav">
+                        <div class='listChooser'>
+                            <button data-bind='click: deleteList, enable: activeTweetersName'>Delete</button>
+                            <button data-bind='click: saveChanges, enable: hasUnsavedChanges'>Save</button> 
+                            <select data-bind='options: savedLists, optionsValue: "name", value: activeTweetersName'> </select>
+                        </div>
 
-                <p>Currently viewing <span data-bind='text: activeTweetersCount'> </span> user(s):</p>
-                <div class='currentUsers' >
-                    <ul data-bind='foreach: activeTweeters'>
-                        <li>
-                            <button data-bind='click: $root.removeUser'>Remove</button>
-                            <div data-bind='text: $data'> </div>
-                        </li>
-                    </ul>
-                </div>
+                        <p>Currently viewing <span data-bind='text: activeTweetersCount'> </span> user(s):</p>
+                        <div class='currentUsers' >
+                            <ul data-bind='foreach: activeTweeters'>
+                                <li>
+                                    <span data-bind='text: $data'></span> 
+                                        <button data-bind='click: $root.removeUser'>Remove</button>           
+                                </li>
+                            </ul>
+                        </div>
 
-                <form data-bind='submit: addUser'>
-                    <label>Add user:</label>
-                    <input data-bind='value: userNameToAdd, valueUpdate: "keyup", css: { invalid: !userNameToAddIsValid() }' />
-                    <button data-bind='enable: userNameToAddIsValid' type='submit'>Add</button>
-                </form>
+                        <form data-bind='submit: addUser'>
+                            <label>Add user:</label>
+                            <input data-bind='value: userNameToAdd, valueUpdate: "keyup", css: { invalid: !userNameToAddIsValid() }' />
+                            <button data-bind='enable: userNameToAddIsValid' type='submit'>Add</button>
+                        </form>
+                    </div>
+                </div>
             </div>
             <div class='tweets'>
                 <div class='loadingIndicator' data-bind="visible: loading">Loading...</div>
-                <table data-bind='foreach: currentTweets' width='100%'>
-                    <tr>
+                <ul class="tweet-list" data-bind='foreach: currentTweets' width='100%'>
+                    <li>
                         <!-- ko with: user -->
-                        <td><img data-bind='attr: { src: profile_image_url }' /></td>
+                        <img data-bind='attr: { src: profile_image_url }' />
                         <!-- /ko -->
-                        <td>
+                        <div class="tweet-right">
                             <!-- ko with: user -->
                             <a class='twitterUser' data-bind='attr: { href: userUrl }, text: name'> </a>
                             <!-- /ko -->
                             <span data-bind='html: html'> </span>
                             <div class='tweetInfo' data-bind='text: created_at'> </div>                            
 
-                        </td>
-                    </tr>
-                </table>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
         <!-- /ko -->

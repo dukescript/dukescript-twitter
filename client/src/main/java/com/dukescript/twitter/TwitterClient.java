@@ -50,6 +50,7 @@ import net.java.html.json.Property;
     @Property(name = "userNameToAdd", type = String.class),
     @Property(name = "currentTweets", type = Tweet.class, array = true),
     @Property(name = "loading", type = boolean.class),
+    @Property(name = "menuExpanded", type = boolean.class),
     @Property(name = "token", type = String.class),
 }, instance = true, targetId = "")
 final class TwitterClient {
@@ -164,6 +165,7 @@ final class TwitterClient {
     static void onPageLoad(PlatformServices services) throws IOException {
 //          services.setPreferences(BEARER_TOKEN, "");
           final String bearerToken = services.getPreferences(BEARER_TOKEN);
+//          final String bearerToken = null;
 
          final TwitterModel model = new TwitterModel().putSavedLists(
             new Tweeters("API Design", "JaroslavTulach"),
@@ -171,7 +173,10 @@ final class TwitterClient {
             new Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
             new Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
             new Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
-        ).putActiveTweetersName("NetBeans").putToken(bearerToken).putCredentials(new Credentials());
+        ).putActiveTweetersName("NetBeans")
+                 .putToken(bearerToken)
+                 .putCredentials(new Credentials())
+                 .putMenuExpanded(false);
         model.setPreferences(services);
         model.applyBindings();
         model.refreshTweets();
