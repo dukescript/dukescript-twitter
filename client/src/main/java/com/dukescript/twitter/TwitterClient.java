@@ -23,8 +23,12 @@
  */
 package com.dukescript.twitter;
 
+import com.dukescript.twitterdemo.token.BearerTokenUtil;
+import com.dukescript.twitterdemo.token.PlatformServices;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.java.html.json.ComputedProperty;
 import net.java.html.json.Function;
 import net.java.html.json.Model;
@@ -39,6 +43,7 @@ import net.java.html.json.Property;
  * @author Anton Epple <anton.epple@eppleton.de>
  */
 @Model(className = "TwitterModel", builder = "put", properties = {
+    @Property(name = "credentials", type = Credentials.class),
     @Property(name = "savedLists", type = Tweeters.class, array = true),
     @Property(name = "activeTweetersName", type = String.class),
     @Property(name = "activeTweeters", type = String.class, array = true),
@@ -46,8 +51,24 @@ import net.java.html.json.Property;
     @Property(name = "currentTweets", type = Tweet.class, array = true),
     @Property(name = "loading", type = boolean.class),
     @Property(name = "token", type = String.class),
-}, targetId = "")
+}, instance = true, targetId = "")
 final class TwitterClient {
+    
+    PlatformServices services;
+    private static final String BEARER_TOKEN = "BEARER_TOKEN";
+    
+    @ModelOperation
+    public void setPreferences(TwitterModel model, PlatformServices services){
+        this.services = services;
+    }
+    
+    @Model(className = "Credentials", properties = {
+        @Property(name = "key", type = String.class),
+        @Property(name = "secret", type = String.class)
+    })
+    static class CredentialsVM {
+    }
+        
     @Model(className = "Tweeters", properties = {
         @Property(name = "name", type = String.class),
         @Property(name = "userNames", type = String.class, array = true)
@@ -140,17 +161,33 @@ final class TwitterClient {
         model.queryTweets("https://api.twitter.com/1.1/search", sb.toString(), model.getToken());
     }
 
-    static void init() throws IOException {
-        final String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-        final TwitterModel model = new TwitterModel().putSavedLists(
+    static void onPageLoad(PlatformServices services) throws IOException {
+          final String bearerToken = services.getPreferences(BEARER_TOKEN);
+
+         final TwitterModel model = new TwitterModel().putSavedLists(
             new Tweeters("API Design", "JaroslavTulach"),
             new Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
             new Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
             new Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
             new Tweeters("Tech pundits", "Scobleizer", "LeoLaporte", "techcrunch", "BoingBoing", "timoreilly", "codinghorror")
-        ).putActiveTweetersName("NetBeans").putToken(BEARER_TOKEN);
+        ).putActiveTweetersName("NetBeans").putToken(bearerToken).putCredentials(new Credentials());
+        model.setPreferences(services);
         model.applyBindings();
         model.refreshTweets();
+    }
+    
+    @Function
+    public void getBearerToken(TwitterModel model, Credentials data){
+        try {
+            String bearerToken = BearerTokenUtil.getBearerToken(data.getKey(), data.getSecret());
+            if (bearerToken!=null &! bearerToken.isEmpty()){
+                model.setToken(bearerToken);
+                services.setPreferences(BEARER_TOKEN, bearerToken);
+                model.refreshTweets();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TwitterClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @ComputedProperty

@@ -23,9 +23,11 @@
  */
 package com.dukescript.twitter;
 
+import com.dukescript.twitterdemo.token.PlatformServices;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import net.java.html.boot.BrowserBuilder;
 
 
@@ -47,13 +49,29 @@ public class Main {
         System.exit(0);
         
     }
-
-    public static void onPageLoad(String... args) {
-        try {
-          
-            TwitterClient.init();
+    
+      public static void onPageLoad(PlatformServices services) throws Exception {
+          try {  
+            TwitterClient.onPageLoad(services);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void onPageLoad() throws Exception {
+        // don't put "common" initialization stuff here, other platforms (iOS, Android, Bck2Brwsr) may not call this method. They rather call DataModel.onPageLoad
+        onPageLoad(new DesktopServices());
+    }
+
+    private static final class DesktopServices extends PlatformServices {
+        @Override
+        public String getPreferences(String key) {
+            return Preferences.userNodeForPackage(Main.class).get(key, null);
+        }
+
+        @Override
+        public void setPreferences(String key, String value) {
+            Preferences.userNodeForPackage(Main.class).put(key, value);
         }
     }
 

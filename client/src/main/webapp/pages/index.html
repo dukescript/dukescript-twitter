@@ -40,7 +40,25 @@
             .liveExample button { height: 2em; }
         </style>
     </head>
-    <body>        
+    <body>
+
+
+        <!-- ko ifnot: token -->
+        <h2>Register your app</h2>
+        <p>Cannot authenticate against Twitter Services, because there is no "Bearer Token" stored on this device.
+            If you have registered your app, please enter your credentials below, so we can retrieve the Bearer Token.
+            If you haven't registered your app yet, you can do so <a href='' target="_blank">here</a>.
+
+        </p>
+        <form data-bind="with: credentials">
+            <label for="key">Key: </label>
+            <input id="key" type="text" data-bind="textInput: key"/>
+            <label for="secret">Secret: </label>
+            <input id="secret" type="text" data-bind="textInput: secret"/>
+            <button type="submit" data-bind="click: $root.getBearerToken">Submit</button>
+        </form>
+        <!-- /ko  -->
+        <!-- ko if: token -->
         <div class='liveExample'>
             <div class='configuration'>
                 <div class='listChooser'>
@@ -73,9 +91,9 @@
                         <td><img data-bind='attr: { src: profile_image_url }' /></td>
                         <!-- /ko -->
                         <td>
-                        <!-- ko with: user -->
-                        <a class='twitterUser' data-bind='attr: { href: userUrl }, text: name'> </a>
-                        <!-- /ko -->
+                            <!-- ko with: user -->
+                            <a class='twitterUser' data-bind='attr: { href: userUrl }, text: name'> </a>
+                            <!-- /ko -->
                             <span data-bind='html: html'> </span>
                             <div class='tweetInfo' data-bind='text: created_at'> </div>                            
 
@@ -84,5 +102,6 @@
                 </table>
             </div>
         </div>
+        <!-- /ko -->
     </body>
 </html>
