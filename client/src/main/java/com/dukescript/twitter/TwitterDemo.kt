@@ -2,8 +2,7 @@
 
 package com.dukescript.twitter
 
-import com.sun.corba.se.spi.orbutil.fsm.Action
-import com.dukescript.api.kt.Objs
+import com.dukescript.api.kt.Model
 import com.dukescript.api.kt.action
 import com.dukescript.api.kt.actionWithData
 import com.dukescript.api.kt.computed
@@ -36,8 +35,8 @@ fun onPageLoad(vararg args: String) {
 
 private class TwitterDemo(
         token: String, selectedListName: String, vararg lists: Tweeters
-) : Objs.Provider {
-    override val objs = Objs(this)
+) : Model.Provider {
+    override val objs = Model(this)
     val savedLists: MutableList<Tweeters> by observableList(*lists) {
         updateActiveTweeters()
     }
@@ -134,8 +133,8 @@ private class TwitterDemo(
     }
 }
 
-class Tweeters : Objs.Provider {
-    override val objs = Objs(this)
+class Tweeters : Model.Provider {
+    override val objs = Model(this)
 
     var name by observable("")
     val userNames: MutableList<String> by observableList()
@@ -146,8 +145,8 @@ class Tweeters : Objs.Provider {
     }
 }
 
-final class User : Objs.Provider {
-    override val objs = Objs(this)
+final class User : Model.Provider {
+    override val objs = Model(this)
 
     var name by observable("")
     var id_str by observable("")
@@ -158,8 +157,8 @@ final class User : Objs.Provider {
     }
 }
 
-final class Tweet : Objs.Provider {
-    override val objs = Objs(this)
+final class Tweet : Model.Provider {
+    override val objs = Model(this)
     var text: String by observable("")
     var created_at: String by observable("")
     var user: User? by observable(null)
@@ -186,8 +185,8 @@ final class Tweet : Objs.Provider {
     }
 }
 
-class TwitterQuery : Objs.Provider {
-    override val objs = Objs(this)
+class TwitterQuery : Model.Provider {
+    override val objs = Model(this)
     
     val statuses: MutableList<Tweet> by observableList()
 }
