@@ -19,6 +19,8 @@
     <properties>
         <project.mainclass>com.dukescript.twitter.iOSMain</project.mainclass>
         <netbeans.compile.on.save>none</netbeans.compile.on.save>
+        <robovm.version>2.3.2</robovm.version>
+        <presenters.version>1.5</presenters.version>
     </properties>
     <build>
         <plugins>
@@ -68,6 +70,7 @@
                     <overWrite>true</overWrite>
                     <outputDirectory>target/web/pages</outputDirectory>
                     <includes>*/**</includes>
+                    <includeGroupIds>${project.groupId}</includeGroupIds>
                 </configuration>
             </plugin>
             <plugin>
@@ -137,15 +140,39 @@
                                     <cropHeight>480</cropHeight>
                                     <color>white</color>
                                 </image>
+                                <image>
+                                    <source>src/main/icons/launcher.png</source>
+                                    <destination>Default@2x-Landscape.png</destination>
+                                    <width>240</width>
+                                    <cropWidth>960</cropWidth>
+                                    <cropHeight>640</cropHeight>
+                                    <color>white</color>
+                                </image>
+                                <image>
+                                    <source>src/main/icons/launcher.png</source>
+                                    <destination>Default-568h@2x-Landscape.png</destination>
+                                    <width>240</width>
+                                    <cropWidth>1136</cropWidth>
+                                    <cropHeight>640</cropHeight>
+                                    <color>white</color>
+                                </image>
+                                <image>
+                                    <source>src/main/icons/launcher.png</source>
+                                    <destination>Default-Landscape.png</destination>
+                                    <width>120</width>
+                                    <cropWidth>480</cropWidth>
+                                    <cropHeight>320</cropHeight>
+                                    <color>white</color>
+                                </image>
                             </images>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.robovm</groupId>
+                <groupId>com.mobidevelop.robovm</groupId>
                 <artifactId>robovm-maven-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>${robovm.version}</version>
                 <configuration>
                     <config>
                         <mainClass>${project.mainclass}</mainClass>
@@ -164,6 +191,7 @@
                                 </includes>
                             </resource>
                         </resources>
+                        <os>ios</os>
                     </config>
                     <includeJFX>false</includeJFX>
                 </configuration>
@@ -195,7 +223,7 @@
         <dependency>
             <groupId>com.dukescript.presenters</groupId>
             <artifactId>ios</artifactId>
-            <version>0.8.1</version>
+            <version>${presenters.version}</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -214,5 +242,18 @@
             <version>${net.java.html.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.mobidevelop.robovm</groupId>
+            <artifactId>robovm-cocoatouch</artifactId>
+            <version>${robovm.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.mobidevelop.robovm</groupId>
+            <artifactId>robovm-rt</artifactId>
+            <version>${robovm.version}</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>
+

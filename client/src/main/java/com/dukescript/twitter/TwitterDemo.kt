@@ -10,20 +10,24 @@ import com.dukescript.api.kt.computed
 import com.dukescript.api.kt.observable
 import com.dukescript.api.kt.observableList
 import com.dukescript.api.kt.loadJSON
+import com.dukescript.twitterdemo.token.BearerTokenUtil
+import com.dukescript.twitterdemo.token.PlatformServices
+import java.util.prefs.Preferences
 import net.java.html.boot.BrowserBuilder
 
 fun main(args: Array<String>) {
     BrowserBuilder.newBrowser().loadPage("pages/index.html")
             .loadFinished {
-                onPageLoad(*args)
+                onPageLoad(DesktopServices(), *args)
             }
             .showAndWait();
     System.exit(0);
 }
 
-fun onPageLoad(vararg args: String) {
-    val BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz";
-    val model = TwitterDemo(BEARER_TOKEN, "NetBeans", Tweeters("API Design", "JaroslavTulach"),
+private val BEARER_TOKEN = "BEARER_TOKEN"
+
+fun onPageLoad(prefs : PlatformServices, vararg args: String) {
+    val model = TwitterDemo(prefs, "NetBeans", Tweeters("API Design", "JaroslavTulach"),
             Tweeters("Celebrities", "JohnCleese", "MCHammer", "StephenFry", "algore", "StevenSanderson"),
             Tweeters("Microsoft people", "BillGates", "shanselman", "ScottGu"),
             Tweeters("NetBeans", "GeertjanW", "monacotoni", "NetBeans", "petrjiricka"),
@@ -34,7 +38,7 @@ fun onPageLoad(vararg args: String) {
 }
 
 private class TwitterDemo(
-        token: String, selectedListName: String, vararg lists: Tweeters
+        val services: PlatformServices, selectedListName: String, vararg lists: Tweeters
 ) : Model.Provider {
     override val objs = Model(this)
     val savedLists: MutableList<Tweeters> by observableList(*lists) {
@@ -49,7 +53,9 @@ private class TwitterDemo(
     var userNameToAdd by observable("")
     val currentTweets: MutableList<Tweet> by observableList()
     var loading by observable(false)
-    var token by observable(token)
+    var token by observable("")
+    var menuExpanded by observable(false)
+    var credentials by observable(Credentials())
 
     val hasUnsavedChanges by computed {
         val tw = findByName(savedLists, activeTweetersName);
@@ -89,6 +95,18 @@ private class TwitterDemo(
     val removeUser by actionWithData { data: String? ->
         if (data != null) {
             activeTweeters -= data
+        }
+    }
+
+    val  getBearerToken by actionWithData { data : Credentials? ->
+        if (data != null) {
+            val bearerToken = BearerTokenUtil.getBearerToken(data.key, data.secret)
+            if (bearerToken != null && !bearerToken.isEmpty()){
+                token = bearerToken
+                services.setPreferences(BEARER_TOKEN, bearerToken)
+                refreshTweets()
+                Unit
+            }
         }
     }
 
@@ -191,3 +209,19 @@ class TwitterQuery : Model.Provider {
     val statuses: MutableList<Tweet> by observableList()
 }
 
+class Credentials : Model.Provider {
+    override val objs = Model(this)
+
+    var key by observable("")
+    var secret by observable("")
+}
+
+private class DesktopServices : PlatformServices() {
+    override fun getPreferences(key: String): String {
+        return Preferences.userNodeForPackage(DesktopServices::class.java).get(key, null);
+    }
+
+    override fun setPreferences(key : String, value : String): Unit {
+        Preferences.userNodeForPackage(DesktopServices::class.java).put(key, value);
+    }
+}

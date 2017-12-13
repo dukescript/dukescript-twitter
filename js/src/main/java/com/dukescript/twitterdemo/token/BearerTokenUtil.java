@@ -14,10 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import net.java.html.js.JavaScriptBody;
 
 /**
  *
@@ -28,12 +25,15 @@ public class BearerTokenUtil {
     private static String RESOURCE_URL = "https://api.twitter.com/oauth2/token";
     private static String CHARSET = "UTF-8";
 
+    @JavaScriptBody(
+            args = {"msg"},
+            javacall = true,
+            body = "return prompt(msg);\n"
+    )
+    public static native String askForBearerToken(String msg);
     
-
-
-    static String getBearerToken(String key, String secret) throws MalformedURLException, IOException {
-
-        StringBuffer buffer = new StringBuffer();
+    public static String getBearerToken(String key, String secret) throws MalformedURLException, IOException {
+        StringBuilder buffer = new StringBuilder();
         HttpURLConnection connection = (HttpURLConnection) new URL(RESOURCE_URL).openConnection();
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
