@@ -206,8 +206,8 @@
     </dependency>
     <dependency>
       <groupId>com.dukescript.api</groupId>
-      <artifactId>kt</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <artifactId>kt-mvvm</artifactId>
+      <version>0.1</version>
     </dependency>
   </dependencies>
   <profiles>
