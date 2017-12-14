@@ -53,7 +53,7 @@ private class TwitterDemo(
     var userNameToAdd by observable("")
     val currentTweets: MutableList<Tweet> by observableList()
     var loading by observable(false)
-    var token by observable("")
+    var token by observable("AAAAAAAAAAAAAAAAAAAAAKOzBgAAAAAAdiww7KsRPsBd%2B%2FPJrEmVk8slQaU%3DTxNsLo3L82jXMA3ZeejrkDqMqTcrgQTj1xZLVdFtdPzkIXubWz")
     var menuExpanded by observable(false)
     var credentials by observable(Credentials())
 
