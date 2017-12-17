@@ -26,10 +26,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>com.dukescript.twitter.js;META-INF.services</Export-Package>
+                        <Export-Package>com.dukescript.twitterdemo.token</Export-Package>
                         <Bundle-SymbolicName>com.dukescript.twitter.js</Bundle-SymbolicName>
                     </instructions>
-                </configuration>                
+                </configuration>
             </plugin>
           <plugin>
               <groupId>org.netbeans.html</groupId>
@@ -43,7 +43,7 @@
                       </goals>
                   </execution>
               </executions>
-          </plugin>          
+          </plugin>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
@@ -51,6 +51,32 @@
               <configuration>
                   <source>1.7</source>
                   <target>1.7</target>
+              </configuration>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.19.1</version>
+              <configuration>
+                  <junitArtifactName>com.dukescript.api:junit-osgi</junitArtifactName>
+                  <systemPropertyVariables>
+                      <fxpresenter.headless>true</fxpresenter.headless>
+                  </systemPropertyVariables>
+              </configuration>
+          </plugin>
+          <plugin>
+              <groupId>org.apidesign.bck2brwsr</groupId>
+              <artifactId>bck2brwsr-maven-plugin</artifactId>
+              <version>${bck2brwsr.version}</version>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>library</goal>
+                      </goals>
+                  </execution>
+              </executions>
+              <configuration>
+                  <obfuscation>NONE</obfuscation>
               </configuration>
           </plugin>
       </plugins>
@@ -62,10 +88,17 @@
         <version>${net.java.html.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <scope>test</scope>
+        <groupId>com.dukescript.api</groupId>
+        <artifactId>junit-osgi</artifactId>
+        <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>com.dukescript.api</groupId>
+        <artifactId>junit-browser-runner</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Nashorn presenter for BrowserRunner -->
     <dependency>
       <groupId>org.netbeans.html</groupId>
       <artifactId>net.java.html.boot.script</artifactId>
@@ -73,17 +106,31 @@
       <scope>test</scope>
       <type>jar</type>
     </dependency>
+
+    <!-- Bck2Brwsr VM presenter for BrowserRunner ...
     <dependency>
-      <groupId>org.netbeans.html</groupId>
-      <artifactId>net.java.html.json</artifactId>
-      <version>${net.java.html.version}</version>
+      <groupId>org.apidesign.bck2brwsr</groupId>
+      <artifactId>launcher.http</artifactId>
+      <version>${bck2brwsr.version}</version>
+      <scope>test</scope>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.netbeans.api</groupId>
-      <artifactId>org-openide-util-lookup</artifactId>
-      <version>RELEASE80</version>
+      <groupId>org.apidesign.bck2brwsr</groupId>
+      <artifactId>ko-bck2brwsr</artifactId>
+      <version>${bck2brwsr.version}</version>
+      <classifier>bck2brwsr</classifier>
+      <scope>test</scope>
       <type>jar</type>
     </dependency>
+    <dependency>
+        <groupId>com.dukescript.api</groupId>
+        <artifactId>junit-browser-runner</artifactId>
+        <version>${junit.browser.version}</version>
+        <scope>test</scope>
+        <classifier>bck2brwsr</classifier>
+        <type>jar</type>
+    </dependency>
+    ... End of Bck2Brwsr VM presenter for BrowserRunner -->
   </dependencies>
 </project>

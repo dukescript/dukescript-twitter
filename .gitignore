@@ -2,3 +2,5 @@
 /client/target/
 /client-android/target/
 /client-ios/target/
+/client-web/target/
+
